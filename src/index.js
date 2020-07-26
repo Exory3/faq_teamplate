@@ -4,52 +4,91 @@ import style from "./index.module.css";
 import { useState } from "react";
 import SlideDown from "react-slidedown";
 import 'react-slidedown/lib/slidedown.css'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faChevronDown, faChevronUp } from '@fortawesome/free-solid-svg-icons'
 
-let faqEntries = [
+const faqEntries = [
     {
-        question: "How does Google protect my privacy and keep my information secure?",
-        answer: "We’re constantly working to ensure strong security, protect your privacy, and make Google even more effective and efficient for you. We spend hundreds of millions of dollars every year on security, and employ world-renowned experts in data security to keep your information safe. We also built easy-to-use privacy and security tools like Google Dashboard, 2-step verification and Ads Settings. So when it comes to the information you share with Google, you’re in control."
+        question: "Search",
+        answer: [
+            { question: "question 1", answer: "answer 1 " },
+            { question: "question 2", answer: "answer 2 " },
+            { question: "question 3", answer: "answer 3 " }
+        ]
     },
     {
-        question:"How can I remove information about myself from Google's search results?",
-        answer: "Google search results are a reflection of the content publicly available on the web. Search engines can’t remove content directly from websites, so removing search results from Google wouldn’t remove the content from the web. If you want to remove something from the web, you should contact the webmaster of the site the content is posted on and ask him or her to make a change. Once the content has been removed and Google has noted the update, the information will no longer appear in Google’s search results. If you have an urgent removal request, you can also visit our help page for more information."
+        question: "Security",
+        answer: [
+            { question: "question 4", answer: "answer 4 " },
+            { question: "question 5", answer: "answer 5 " },
+            {
+                question: "How can I remove information about myself from Google's search results?",
+                answer: "Google search results are a reflection of the content publicly available on the web. Search engines can’t remove content directly from websites, so removing search results from Google wouldn’t remove the content from the web. If you want to remove something from the web, you should contact the webmaster of the site the content is posted on and ask him or her to make a change. Once the content has been removed and Google has noted the update, the information will no longer appear in Google’s search results. If you have an urgent removal request, you can also visit our help page for more information."
+            }
+        ]
     },
     {
-        question: "Are my search queries sent to websites when I click on Google Search results?",
-        answer: "In some cases, yes. When you click on a search result in Google Search, your web browser also may send the Internet address, or URL, of the search results page to the destination webpage as the Referrer URL. The URL of the search results page may sometimes contain the search query you entered. If you are using SSL Search (Google’s encrypted search functionality), under most circumstances, your search terms will not be sent as part of the URL in the Referrer URL. There are some exceptions to this behavior, such as if you are using some less popular browsers. More information on SSL Search can be found here. Search queries or information contained in the Referrer URL may be available via Google Analytics or an application programming interface (API). In addition, advertisers may receive information relating to the exact keywords that triggered an ad click."
+        question: "Business",
+        answer: [
+            { question: "question 7", answer: "answer 7 " },
+            { question: "question 8", answer: "answer 8 " },
+            {
+                question: "Business Details",
+        answer: [
+            { question: "question 9", answer: "answer 9 " },
+            { question: "question 10", answer: "answer 10 " },
+            {
+                question: "How can I remove information about myself from Google's search results?",
+                answer: "Google search results are a reflection of the content publicly available on the web. Search engines can’t remove content directly from websites, so removing search results from Google wouldn’t remove the content from the web. If you want to remove something from the web, you should contact the webmaster of the site the content is posted on and ask him or her to make a change. Once the content has been removed and Google has noted the update, the information will no longer appear in Google’s search results. If you have an urgent removal request, you can also visit our help page for more information."
+            }
+        ]
+            }
+        ]
     },
 ]
-
 
 
 const DropDown = (props) => {
     return (
         <SlideDown className={'my-dropdown-slidedown'}>
-            {props.open ? <p className={style.answer}>{props.answer}</p>: null}
+            {props.open ? <p className={style.answer}>{props.answer}</p> : null}
         </SlideDown>
     )
 }
-const App = (props) => {
-    let records = props.entries.map(entry => (<FaqRecord question = {entry.question} answer={entry.answer}/>))
-    return (
-        <div className={style.entry}>
-        <h1>Google's FAQ  Page</h1>
-        {records}
-        </div>
-    )
-}
 
-const FaqRecord = (props) => {
+
+const FaqRecord = ({ question, answer }) => {
     const [hidden, setHidden] = useState(true)
     let questionClasses = !hidden ? `${style.question} ${style.hide}` : `${style.question} ${style.show}`
+    questionClasses = Array.isArray(answer) ? questionClasses + " " + `${style.pink}` : questionClasses
+
+    let records = Array.isArray(answer) ?
+        answer.map(answery => <div className={style.indent}><FaqRecord question={answery.question} answer={answery.answer} /></div>) :
+        <DropDown open={!hidden} answer={answer} />
+
     return (
         <div>
-            <h3 className={questionClasses} onClick={() => { setHidden(!hidden) }}>{props.question}</h3>
-            <DropDown open = {!hidden} answer = {props.answer}/>
+            <h3 className={questionClasses} onClick={() => { setHidden(!hidden) }}>{question}</h3>
+            {!hidden && records}
         </div>
     )
 }
 
 
+const App = ({ entries }) => {
+    let [hidden, setHidden] = useState(true)
+    let icon = hidden ? faChevronDown: faChevronUp
+    let records = entries.map(entry => (<FaqRecord question={entry.question} answer={entry.answer} />))
+    return (
+        <div className={style.entry}>
+            <div className={style.header} onClick={() => setHidden(!hidden)}>
+                <h2>Google's FAQ  Page</h2>
+                <FontAwesomeIcon id="icon" icon={icon} />
+            </div>
+            {!hidden && records}
+        </div>
+    )
+}
 
-ReactDOM.render(<App entries = {faqEntries} />, document.getElementById("root"));
+
+ReactDOM.render(<App entries={faqEntries} />, document.getElementById("root"));
