@@ -7,5 +7,5 @@ Accepts list of objects with {question,answer} keys. If answer includes another 
 ![Preview]("./example.jpg")
 ![Preview]("/example.jpg")
 ![Preview]("example.jpg")
-![Preview](https://i.imgur.com/6fvktvk.png)
+![Preview]("https://i.imgur.com/6fvktvk.png")
 
